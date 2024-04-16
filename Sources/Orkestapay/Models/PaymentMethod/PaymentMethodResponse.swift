@@ -9,9 +9,9 @@ import Foundation
 
 public struct PaymentMethodResponse: Codable {
 
-    let paymentMethodId: String
-    let alias: String?
-    let type: PaymentMethodType
-    let card: CardResponse
+    public let paymentMethodId: String
+    public let alias: String?
+    public let type: PaymentMethodType
+    public let card: CardResponse
 
 }

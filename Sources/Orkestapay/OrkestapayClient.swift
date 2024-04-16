@@ -40,6 +40,16 @@ public class OrkestapayClient: NSObject {
         } catch {
             throw OrkestapayError(errorDescription: error.localizedDescription)
         }
-        
+    }
+    
+    public func getPromotions(binNumber: String, currency: String, totalAmount: String) async throws -> [PromotionsResponse] {
+        do {
+            let response = try await self.orkestapayAPI.getPromotions(binNumber: binNumber, currency: currency, totalAmount: totalAmount)
+            return response
+        } catch let error as CoreSDKError{
+            throw OrkestapayError(errorDescription: error.errorDescription)
+        } catch {
+            throw OrkestapayError(errorDescription: error.localizedDescription)
+        }
     }
 }

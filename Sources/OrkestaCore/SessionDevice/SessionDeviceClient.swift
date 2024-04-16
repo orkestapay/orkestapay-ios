@@ -11,7 +11,6 @@ import WebKit
 
 public class SessionDeviceClient: NSObject, WKScriptMessageHandler {
     
-    public weak var delegate: DeviceSessionDelegate?
     public var successSession: ((String) -> ())?
     public var failureSession: ((String) -> ())?
     public var getSessionListener = false
@@ -62,34 +61,8 @@ public class SessionDeviceClient: NSObject, WKScriptMessageHandler {
                 failureSession!("Error getting device session id")
             }
             
-            
         }
-        
-        //self.notifySuccess(for: formValues["device_session_id"]! as! String)
-        
+                
     }
-    
-    public func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
-        print("enterrrr")
-        
-        
-        
-        /*if !webView.isLoading {
-            print("ent")
-            let timer = Timer.scheduledTimer(withTimeInterval: 1.0, repeats: true) { timer in
-                print("Timer fired!")
-                webView.evaluateJavaScript("document.getElementById(\"app\").getElementsByTagName(\"span\")[0].innerText"){ (result, error) in
-                    if let result = result {
-                        print(result)
-                        timer.invalidate()
-                    }
-                }
-            }
-            
-        }*/
-    }
-    
-    private func notifySuccess(for result: String) {
-        delegate?.sessionDevice(self, didFinishWithResult: result)
-    }
+
 }

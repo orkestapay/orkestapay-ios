@@ -40,4 +40,18 @@ class OrkestapayAPI {
         let httpResponse = try await networkingClient.fetch(request: restRequest)
         return try HTTPResponseParser().parseREST(httpResponse, as: PaymentMethodResponse.self)
     }
+    
+    func getPromotions(binNumber: String, currency: String, totalAmount: String) async throws -> [PromotionsResponse] {
+        let queryParams: [String: String] = ["binNumber":binNumber, "currency":currency, "totalAmount": totalAmount]
+        
+        let restRequest = RESTRequest(
+            path: "/v1/merchants/\(coreConfig.merchantId)/promotions",
+            method: .get,
+            queryParameters: queryParams,
+            postParameters: nil
+        )
+        
+        let httpResponse = try await networkingClient.fetch(request: restRequest)
+        return try HTTPResponseParser().parseREST(httpResponse, as: [PromotionsResponse].self)
+    }
 }

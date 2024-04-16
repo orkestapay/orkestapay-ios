@@ -6,3 +6,12 @@
 //
 
 import Foundation
+
+public struct PaymentMethodResponse: Codable {
+
+    let paymentMethodId: String
+    let alias: String?
+    let type: PaymentMethodType
+    let card: CardResponse
+
+}

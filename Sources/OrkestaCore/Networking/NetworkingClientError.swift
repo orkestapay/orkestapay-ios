@@ -33,6 +33,9 @@ enum NetworkingClientError {
         /// 6. The server's response body returned an error message.
         case serverResponseError
         
+        /// 7.
+        case urlEncodingFailed
+        
 
     }
 
@@ -61,19 +64,19 @@ enum NetworkingClientError {
     static let invalidURLResponseError = CoreSDKError(
         code: Code.invalidURLResponse.rawValue,
         domain: domain,
-        errorDescription: "An error occured due to an invalid HTTP response. Contact /support."
+        errorDescription: "An error occured due to an invalid HTTP response"
     )
 
     static let noResponseDataError = CoreSDKError(
         code: Code.noResponseData.rawValue,
         domain: domain,
-        errorDescription: "An error occured due to missing HTTP response data. Contact /support."
+        errorDescription: "An error occured due to missing HTTP response data."
     )
 
     static let invalidURLRequestError = CoreSDKError(
         code: Code.invalidURLRequest.rawValue,
         domain: domain,
-        errorDescription: "An error occured constructing an HTTP request. Contact /support."
+        errorDescription: "An error occured constructing an HTTP request"
     )
 
     static let serverResponseError: (String) -> CoreSDKError = { description in
@@ -84,5 +87,9 @@ enum NetworkingClientError {
         )
     }
     
-
+    public static let urlEncodingFailed = CoreSDKError(
+        code: Code.urlEncodingFailed.rawValue,
+        domain: domain,
+        errorDescription: "An error occured constructing the Orkesta API URL"
+    )
 }

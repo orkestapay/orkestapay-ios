@@ -28,7 +28,7 @@ class OrkestaHTTP {
         httpRequest.headers.forEach { key, value in
             urlRequest.addValue(value, forHTTPHeaderField: key.rawValue)
         }
-        
+        print(httpRequest)
         let (data, response) = try await urlSession.performRequest(with: urlRequest)
         guard let response = response as? HTTPURLResponse else {
             throw NetworkingClientError.invalidURLResponseError

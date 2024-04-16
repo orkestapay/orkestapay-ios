@@ -7,24 +7,22 @@
 
 import Foundation
 
-public struct PaymentMethodRequest: Encodable {
-
+public struct PaymentMethod: Encodable {
+    public var alias: String?
     public var customerId: String?
-    public var alias: String
+    public var deviceSessionId: String?
     public var type: PaymentMethodType
-    public var deviceSessionId: String
-    public var card: CardRequest
+    public var card: Card
 
     public init(
-        customerId: String,
-        alias: String,
-        type: PaymentMethodType,
-        deviceSessionId: String,
-        card: CardRequest
+        alias: String?,
+        customerId: String?,
+        deviceSessionId: String?,
+        card: Card
     ) {
         self.customerId = customerId
         self.alias = alias
-        self.type = type
+        self.type = .CARD
         self.deviceSessionId = deviceSessionId
         self.card = card
     }

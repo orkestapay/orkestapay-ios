@@ -6,3 +6,11 @@
 //
 
 import Foundation
+
+public enum CardType: String, Codable {
+    case DEBIT = "DEBIT"
+    case CREDIT = "CREDIT"
+    case PREPAID = "PREPAID"
+    case CHARGE = "CHARGE"
+    case UNKNOWN = "UNKNOWN"
+}

@@ -9,10 +9,12 @@ import Foundation
 import JavaScriptCore
 import WebKit
 
-public class DeviceSessionClient: NSObject, WKScriptMessageHandler {
+public class SessionDeviceClient: NSObject, WKScriptMessageHandler {
     
     public weak var delegate: DeviceSessionDelegate?
     public var successSession: ((String) -> ())?
+    public var failureSession: ((String) -> ())?
+    public var getSessionListener = false
     
     // MARK: - Internal Properties
     
@@ -23,13 +25,13 @@ public class DeviceSessionClient: NSObject, WKScriptMessageHandler {
     var webView: WKWebView?
 
     public init(coreConfig: CoreConfig) {
-       
         self.coreConfig = coreConfig
-        
     }
     
-    public func getSessionId(successSessionID: @escaping (String) -> Void) {
+    public func getSessionDeviceId(_ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
+        getSessionListener = false
         successSession = successSessionID
+        failureSession = failureSessionID
         
         let config = WKWebViewConfiguration()
         config.userContentController.add(self, name: "postMessageListener")
@@ -39,65 +41,28 @@ public class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         let url = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path).absoluteString.removingPercentEncoding!
         webView?.load(URLRequest(url: URL(string: url)!))
         
-    }
-    
-    public func getSessionIdJS(completion: @escaping (String?) -> Void) {
-        print("entttr")
-
-
-        
-        let context = JSContext()!
-        context.exceptionHandler = { context, exception in
-            Swift.print("exception:", exception?.toString() ?? "")
+        Timer.scheduledTimer(withTimeInterval: 12.0, repeats: false) { timer in
+            if !self.getSessionListener {
+                self.webView?.load(URLRequest(url: URL(string: url)!))
+            }
         }
-        let script = try! String(contentsOf: URL(string: "https://checkout.dev.orkestapay.com/script/orkestapay.js")!)
-        print(script)
-        context.evaluateScript(script)
         
-    
-
-        //let merchantId = "mch_1a06356c660d4552b0d873b43d227071"
-        //let publicKey = "pk_test_vlvzqfkkycg4tpw9p340g63hc5zmwbbg"
-        
-        //let merchantId = "dh_merchant_id" as NSString
-        //let publicKey = "dh_public_key" as NSString
-        
-        
-        //context.setObject(coreConfig.merchantId, forKeyedSubscript: merchantId)
-        //context.setObject(coreConfig.publicKey, forKeyedSubscript: publicKey)
-        
-        /*print("initOrkestaPay({merchant_id: '\(coreConfig.merchantId)', public_key:'\(coreConfig.publicKey)'})")
-        
-        let orkestapay = context.evaluateScript("initOrkestaPay({merchant_id: '\(coreConfig.merchantId)', public_key:'\(coreConfig.publicKey)'})")
-        print(orkestapay?.toString())*/
-        
-        /*let testFunction = context.objectForKeyedSubscript("orkestapay")
-        print(testFunction)
-        
-        Task {
-            do {
-                var data = try await context.callAsyncFunction(key: "orkestapay.getDeviceInfo")
-                print(data)
-                return data.toString()
-                
-            }
-            catch {
-                print(error.localizedDescription) // Prints: Key is empty
-                return nil
-            }
-            
-        }*/
-        
-        //let deviceInfo = context.evaluateScript("(async function () { const deviceInfo = await orkestapay.getDeviceInfo();})();")
-        //print(deviceInfo!)
- 
     }
     
     public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "postMessageListener" {
+            getSessionListener = true
             guard let formValues = message.body as? [String: AnyObject] else { return }
-            print(formValues["device_session_id"]!)
-            successSession!(formValues["device_session_id"]! as! String)
+            let hasId = formValues.contains { (key: String, value: AnyObject) in
+                return key == "device_session_id"
+            }
+            if hasId {
+                successSession!(formValues["device_session_id"]! as! String)
+            } else {
+                failureSession!("Error getting device session id")
+            }
+            
+            
         }
         
         //self.notifySuccess(for: formValues["device_session_id"]! as! String)
@@ -125,6 +90,6 @@ public class DeviceSessionClient: NSObject, WKScriptMessageHandler {
     }
     
     private func notifySuccess(for result: String) {
-        delegate?.deviceSession(self, didFinishWithResult: result)
+        delegate?.sessionDevice(self, didFinishWithResult: result)
     }
 }

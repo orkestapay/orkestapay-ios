@@ -10,8 +10,12 @@ import Foundation
 public struct CoreConfig {
 
     public let environment: Environment
+    public let merchantId: String
+    public let publicKey: String
 
-    public init(environment: Environment) {
+    public init(merchantId: String, publicKey: String, environment: Environment) {
+        self.merchantId = merchantId
+        self.publicKey = publicKey
         self.environment = environment
     }
 }

@@ -22,26 +22,23 @@ public class NetworkingClient {
         self.coreConfig = coreConfig
     }
     
-    // MARK: - Internal Initializer
-
-    /// Exposed for testing
-    init(http: OrkestaHTTP) {
-        self.http = http
-        self.coreConfig = http.coreConfig
-    }
     
     // MARK: - Public Methods
 
-    /// This function makes a network request from a RESTRequest and returns HTTPResponse
-    /// which contains status (Int type) and body (optional Data type)
+
     public func fetch(request: RESTRequest) async throws -> HTTPResponse {
         let url = try constructRESTURL(path: request.path, queryParameters: request.queryParameters)
         
-        //let base64EncodedCredentials = Data(coreConfig.clientID.appending(":").utf8).base64EncodedString()
-        var headers: [HTTPHeader: String] = [:]
+        let base64EncodedCredentials = Data(coreConfig.merchantId.appending(":").appending(coreConfig.publicKey).utf8).base64EncodedString()
+        //var headers: [HTTPHeader: String] = [:]
+        
+        var headers: [HTTPHeader: String] = [
+            .authorization: "Basic \(base64EncodedCredentials)"
+        ]
         if request.method == .post {
             headers[.contentType] = "application/json"
         }
+        print(request)
         
         // TODO: - Move JSON encoding into custom class, similar to HTTPResponseParser
         var data: Data?
@@ -68,7 +65,7 @@ public class NetworkingClient {
         }
 
         guard let url = urlComponents?.url else {
-            throw CorePaymentsError.urlEncodingFailed
+            throw NetworkingClientError.urlEncodingFailed
         }
         
         return url

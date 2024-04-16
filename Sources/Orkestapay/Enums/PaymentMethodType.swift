@@ -6,3 +6,8 @@
 //
 
 import Foundation
+
+public enum PaymentMethodType: String, Codable {
+    case CARD = "CARD"
+    case APPLE_PAY = "APPLE_PAY"
+}

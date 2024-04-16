@@ -35,18 +35,20 @@ public class HTTPResponseParser {
     
     // MARK: - Private Methods
     
-    private func parseSuccessResult<T: Decodable>(_ data: Data, as type: T.Type, isGraphQL: Bool = false) throws -> T {
+    private func parseSuccessResult<T: Decodable>(_ data: Data, as type: T.Type) throws -> T {
         do {
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
             return try decoder.decode(T.self, from: data)
         } catch {
             throw NetworkingClientError.jsonDecodingError(error.localizedDescription)
         }
     }
     
-    private func parseErrorResult<T: Decodable>(_ data: Data, as type: T.Type, isGraphQL: Bool = false) throws -> T {
+    private func parseErrorResult<T: Decodable>(_ data: Data, as type: T.Type) throws -> T {
         do {
+            decoder.keyDecodingStrategy = .convertFromSnakeCase
             let errorData = try decoder.decode(ErrorResponse.self, from: data)
-            throw NetworkingClientError.serverResponseError(errorData.readableDescription)
+            throw NetworkingClientError.serverResponseError(errorData.message)
         } catch {
             throw NetworkingClientError.jsonDecodingError(error.localizedDescription)
         }

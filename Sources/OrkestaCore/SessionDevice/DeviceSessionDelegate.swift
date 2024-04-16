@@ -10,6 +10,6 @@ import Foundation
 public protocol DeviceSessionDelegate: AnyObject {
     
 
-    func deviceSession(_ deviceSessionClient: DeviceSessionClient, didFinishWithResult result: String)
+    func sessionDevice(_ sessionDeviceClient: SessionDeviceClient, didFinishWithResult result: String)
     
 }

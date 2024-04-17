@@ -4,7 +4,7 @@ Pod::Spec.new do |s|
   s.summary      = "Orkestapay iOS library"
   s.homepage     = "https://orkestapay.com"
   s.license      = "MIT"
-  s.author       = { "Hector Rodriguez" => "https://orkestapay.com" }
+  s.author       = { "Orkestapay" => "https://orkestapay.com" }
   s.source       = { :git => "https://github.com/orkestapay/orkestapay-ios.git", :tag => "#{s.version}" }
   s.platform = :ios
   s.ios.deployment_target = '14.0'

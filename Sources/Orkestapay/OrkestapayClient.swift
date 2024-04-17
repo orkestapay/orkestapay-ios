@@ -12,19 +12,19 @@ import OrkestaCore
 
 public class OrkestapayClient: NSObject {
     private let config: CoreConfig
-    private let sessionDeviceClient: SessionDeviceClient
+    private let deviceSessionClient: DeviceSessionClient
     private let orkestapayAPI: OrkestapayAPI
     
     
     public init(merchantId: String, publicKey:String, isProductionMode: Bool) {
         self.config = CoreConfig(merchantId: merchantId, publicKey: publicKey, environment: isProductionMode ? .production : .sandbox)
-        self.sessionDeviceClient = SessionDeviceClient(coreConfig: config)
+        self.deviceSessionClient = DeviceSessionClient(coreConfig: config)
         self.orkestapayAPI = OrkestapayAPI(coreConfig: config)
     }
     
     
-    public func createSessionDevice(successSessionID: @escaping (String) -> (), failureSessionID: @escaping (String) -> ()) {
-        sessionDeviceClient.getSessionDeviceId(successSessionID, failureSessionID)
+    public func createDeviceSession(successSessionID: @escaping (String) -> (), failureSessionID: @escaping (String) -> ()) {
+        deviceSessionClient.getDeviceSessionId(successSessionID, failureSessionID)
 
     }
     

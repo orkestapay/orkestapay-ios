@@ -8,7 +8,7 @@
 import Foundation
 import WebKit
 
-class SessionDeviceClient: NSObject, WKScriptMessageHandler {
+class DeviceSessionClient: NSObject, WKScriptMessageHandler {
     
     // MARK: - Internal Properties
     
@@ -26,7 +26,7 @@ class SessionDeviceClient: NSObject, WKScriptMessageHandler {
         self.coreConfig = coreConfig
     }
     
-    func getSessionDeviceId(_ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
+    func getDeviceSessionId(_ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
         getSessionListener = false
         successSession = successSessionID
         failureSession = failureSessionID

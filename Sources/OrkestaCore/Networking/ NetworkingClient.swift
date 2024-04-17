@@ -37,9 +37,7 @@ class NetworkingClient {
         if request.method == .post {
             headers[.contentType] = "application/json"
         }
-        print(request)
         
-        // TODO: - Move JSON encoding into custom class, similar to HTTPResponseParser
         var data: Data?
         if let postBody = request.postParameters {
             let encoder = JSONEncoder()

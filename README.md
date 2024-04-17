@@ -13,9 +13,27 @@ Orkestapay iOS are available through either [CocoaPods](http://cocoapods.org) or
 
 ### Swift Package Manager
 
-To add Orkestapay package to your Xcode project, select File > Add Packages and enter `https://github.com/orkestapay/orkestapay-ios.git` as the repository URL 
+To add Orkestapay package to your Xcode project, select File > Add Packages and enter 
+```bash
+https://github.com/orkestapay/orkestapay-ios.git
+```
+as the repository URL 
 or follow Apple's [Adding Package Dependencies to Your App](https://developer.apple.com/documentation/xcode/adding_package_dependencies_to_your_app
 ) guide on how to add a Swift Package dependency.
+
+### CocoaPods
+To integrate Orkestapay into your Xcode project using CocoaPods, specify it in your `Podfile`:
+
+```ruby
+pod 'Orkestapay'
+```
+
+Then, run the following command:
+
+```bash
+$ pod install
+```
+> Use the .xcworkspace file to open your project in Xcode.
 
 # Usage
 

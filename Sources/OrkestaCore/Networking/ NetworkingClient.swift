@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  NetworkingClient.swift
 //  
 //
 //  Created by Hector Rodriguez on 05/04/24.
@@ -8,7 +8,7 @@
 import Foundation
 
 
-public class NetworkingClient {
+class NetworkingClient {
         
     // MARK: - Internal Properties
     
@@ -17,7 +17,7 @@ public class NetworkingClient {
     
     // MARK: - Public Initializer
 
-    public init(coreConfig: CoreConfig) {
+    init(coreConfig: CoreConfig) {
         self.http = OrkestaHTTP(coreConfig: coreConfig)
         self.coreConfig = coreConfig
     }
@@ -25,8 +25,7 @@ public class NetworkingClient {
     
     // MARK: - Public Methods
 
-
-    public func fetch(request: RESTRequest) async throws -> HTTPResponse {
+    func fetch(request: RESTRequest) async throws -> HTTPResponse {
         let url = try constructRESTURL(path: request.path, queryParameters: request.queryParameters)
         
         let base64EncodedCredentials = Data(coreConfig.merchantId.appending(":").appending(coreConfig.publicKey).utf8).base64EncodedString()
@@ -52,7 +51,6 @@ public class NetworkingClient {
         
         return try await http.performRequest(httpRequest)
     }
-
     
     // MARK: - Private Methods
     
@@ -70,6 +68,4 @@ public class NetworkingClient {
         
         return url
     }
-    
-
 }

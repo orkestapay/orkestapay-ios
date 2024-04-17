@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  HTTPResponseParser.swift
 //  
 //
 //  Created by Hector Rodriguez on 08/04/24.
@@ -7,20 +7,20 @@
 
 import Foundation
 
-public class HTTPResponseParser {
+class HTTPResponseParser {
     
     private let decoder: JSONDecoder
     
     // MARK: - Initializer
 
-    public init(decoder: JSONDecoder = JSONDecoder()) { // exposed for test injection
+    init(decoder: JSONDecoder = JSONDecoder()) { // exposed for test injection
         self.decoder = decoder
         decoder.keyDecodingStrategy = .convertFromSnakeCase
     }
     
     // MARK: - Public Methods
 
-    public func parseREST<T: Decodable>(_ httpResponse: HTTPResponse, as type: T.Type) throws -> T {
+    func parseREST<T: Decodable>(_ httpResponse: HTTPResponse, as type: T.Type) throws -> T {
         guard let data = httpResponse.body else {
             throw NetworkingClientError.noResponseDataError
         }

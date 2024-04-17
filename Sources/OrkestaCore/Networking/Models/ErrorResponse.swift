@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  ErrorResponse.swift
 //  
 //
 //  Created by Hector Rodriguez on 08/04/24.

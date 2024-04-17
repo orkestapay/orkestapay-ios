@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  PromotionsResponse.swift
 //  
 //
 //  Created by Hector Rodriguez on 16/04/24.

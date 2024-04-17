@@ -1,33 +1,32 @@
 //
-//  File.swift
+//  SessionDeviceClient.swift
 //  
 //
 //  Created by Hector Rodriguez on 09/04/24.
 //
 
 import Foundation
-import JavaScriptCore
 import WebKit
 
-public class SessionDeviceClient: NSObject, WKScriptMessageHandler {
-    
-    public var successSession: ((String) -> ())?
-    public var failureSession: ((String) -> ())?
-    public var getSessionListener = false
+class SessionDeviceClient: NSObject, WKScriptMessageHandler {
     
     // MARK: - Internal Properties
     
     private let coreConfig: CoreConfig
     
+    var successSession: ((String) -> ())?
+    var failureSession: ((String) -> ())?
+    private var getSessionListener = false
+    
     // MARK: - Public Initializer
     
     var webView: WKWebView?
 
-    public init(coreConfig: CoreConfig) {
+    init(coreConfig: CoreConfig) {
         self.coreConfig = coreConfig
     }
     
-    public func getSessionDeviceId(_ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
+    func getSessionDeviceId(_ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
         getSessionListener = false
         successSession = successSessionID
         failureSession = failureSessionID
@@ -36,19 +35,24 @@ public class SessionDeviceClient: NSObject, WKScriptMessageHandler {
         config.userContentController.add(self, name: "postMessageListener")
         webView = WKWebView(frame: .zero, configuration: config)
         
-        let path = "/script/device-session.html?merchant_id=\(coreConfig.merchantId)&public_key=\(coreConfig.publicKey)"
-        let url = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path).absoluteString.removingPercentEncoding!
-        webView?.load(URLRequest(url: URL(string: url)!))
+        let queryParameters: [String: String] = ["merchant_id": coreConfig.merchantId, "public_key":coreConfig.publicKey]
         
-        Timer.scheduledTimer(withTimeInterval: 12.0, repeats: false) { timer in
+        let path = "/script/device-session.html"
+        let urlString = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
+        var urlComponents = URLComponents(url: urlString, resolvingAgainstBaseURL: false)
+        urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        
+        webView?.load(URLRequest(url: urlComponents!.url!))
+        
+        Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { timer in
             if !self.getSessionListener {
-                self.webView?.load(URLRequest(url: URL(string: url)!))
+                self.webView?.load(URLRequest(url: urlComponents!.url!))
             }
         }
         
     }
     
-    public func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "postMessageListener" {
             getSessionListener = true
             guard let formValues = message.body as? [String: AnyObject] else { return }

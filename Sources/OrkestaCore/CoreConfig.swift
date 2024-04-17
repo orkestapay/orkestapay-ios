@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CoreConfig.swift
 //  
 //
 //  Created by Hector Rodriguez on 08/04/24.
@@ -7,13 +7,13 @@
 
 import Foundation
 
-public struct CoreConfig {
+struct CoreConfig {
 
-    public let environment: Environment
-    public let merchantId: String
-    public let publicKey: String
+    let environment: Environment
+    let merchantId: String
+    let publicKey: String
 
-    public init(merchantId: String, publicKey: String, environment: Environment) {
+    init(merchantId: String, publicKey: String, environment: Environment) {
         self.merchantId = merchantId
         self.publicKey = publicKey
         self.environment = environment

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Environment.swift
 //  
 //
 //  Created by Hector Rodriguez on 08/04/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public enum Environment {
+enum Environment {
     case sandbox
     case production
 
@@ -29,7 +29,7 @@ public enum Environment {
         }
     }
     
-    public var toString: String {
+    var toString: String {
         switch self {
         case .sandbox:
             return "sandbox"

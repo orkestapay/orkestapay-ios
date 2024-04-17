@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  Card.swift
 //  
 //
 //  Created by Hector Rodriguez on 15/04/24.

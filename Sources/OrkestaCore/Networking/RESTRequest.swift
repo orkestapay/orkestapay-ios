@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  RESTRequest.swift
 //  
 //
 //  Created by Hector Rodriguez on 05/04/24.
@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct RESTRequest {
+struct RESTRequest {
     
     var path: String
     var method: HTTPMethod
     var queryParameters: [String: String]?
     var postParameters: Encodable?
     
-    public init(
+    init(
         path: String,
         method: HTTPMethod,
         queryParameters: [String: String]? = nil,

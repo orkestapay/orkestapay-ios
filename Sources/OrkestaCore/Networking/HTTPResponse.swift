@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  HTTPResponse.swift
 //  
 //
 //  Created by Hector Rodriguez on 05/04/24.
@@ -7,7 +7,7 @@
 
 import Foundation
 
-public struct HTTPResponse {
+struct HTTPResponse {
     
     let status: Int
     let body: Data?

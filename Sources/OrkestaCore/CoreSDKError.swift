@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  CoreSDKError.swift
 //  
 //
 //  Created by Hector Rodriguez on 05/04/24.

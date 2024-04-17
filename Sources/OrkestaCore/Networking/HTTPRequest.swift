@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  HTTPRequest.swift
 //  
 //
 //  Created by Hector Rodriguez on 05/04/24.
@@ -7,14 +7,14 @@
 
 import Foundation
 
-public struct HTTPRequest {
+struct HTTPRequest {
     
     let headers: [HTTPHeader: String]
     let method: HTTPMethod
     let url: URL
     let body: Data?
 
-    public init(
+    init(
         headers: [HTTPHeader: String],
         method: HTTPMethod,
         url: URL,

@@ -1,5 +1,5 @@
 //
-//  File.swift
+//  URLSession.swift
 //  
 //
 //  Created by Hector Rodriguez on 05/04/24.
@@ -10,7 +10,7 @@ import Foundation
 extension URLSession: URLSessionProtocol {
     
     
-    public func performRequest(with urlRequest: URLRequest) async throws -> (Data, URLResponse) {
+    func performRequest(with urlRequest: URLRequest) async throws -> (Data, URLResponse) {
         if #available(iOS 15, *) {
             return try await self.data(for: urlRequest)
         } else {

@@ -3,7 +3,7 @@ Pod::Spec.new do |s|
   s.version      = "0.0.1"
   s.summary      = "Orkestapay iOS library"
   s.homepage     = "https://orkestapay.com"
-  s.license      = "MIT"
+  s.license      = "GNU General Public License v3.0"
   s.author       = { "Orkestapay" => "https://orkestapay.com" }
   s.source       = { :git => "https://github.com/orkestapay/orkestapay-ios.git", :tag => "#{s.version}" }
   s.platform = :ios

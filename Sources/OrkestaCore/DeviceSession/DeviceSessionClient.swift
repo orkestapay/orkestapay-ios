@@ -35,14 +35,16 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         config.userContentController.add(self, name: "postMessageListener")
         webView = WKWebView(frame: .zero, configuration: config)
         
-        let queryParameters: [String: String] = ["merchant_id": coreConfig.merchantId, "public_key":coreConfig.publicKey]
+        let queryParameters: [String: String] = ["merchant_id": coreConfig.merchantId, "public_key": coreConfig.publicKey]
         
         let path = "/script/device-session.html"
         let urlString = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
         var urlComponents = URLComponents(url: urlString, resolvingAgainstBaseURL: false)
         urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
         
-        webView?.load(URLRequest(url: urlComponents!.url!))
+        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
+            self.webView?.load(URLRequest(url: urlComponents!.url!))
+        }
         
         Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { timer in
             if !self.getSessionListener {

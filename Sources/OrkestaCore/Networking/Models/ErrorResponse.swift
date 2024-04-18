@@ -11,6 +11,8 @@ struct ErrorResponse: Codable {
 
     let requestId: String
     let category: String?
-    let message: String
-    let timestamp: String?
+    let message: String?
+    let error: String?
+    
+
 }

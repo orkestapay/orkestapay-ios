@@ -7,6 +7,7 @@
 
 import Foundation
 import WebKit
+import UIKit
 
 class DeviceSessionClient: NSObject, WKScriptMessageHandler {
     
@@ -34,6 +35,8 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         let config = WKWebViewConfiguration()
         config.userContentController.add(self, name: "postMessageListener")
         webView = WKWebView(frame: .zero, configuration: config)
+        let view = UIView(frame: .zero)
+        view.addSubview(webView!)
         
         let queryParameters: [String: String] = ["merchant_id": coreConfig.merchantId, "public_key": coreConfig.publicKey]
         
@@ -42,11 +45,9 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         var urlComponents = URLComponents(url: urlString, resolvingAgainstBaseURL: false)
         urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
         
-        Timer.scheduledTimer(withTimeInterval: 1.0, repeats: false) { timer in
-            self.webView?.load(URLRequest(url: urlComponents!.url!))
-        }
+        webView?.load(URLRequest(url: urlComponents!.url!))
         
-        Timer.scheduledTimer(withTimeInterval: 15.0, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
             if !self.getSessionListener {
                 self.webView?.load(URLRequest(url: urlComponents!.url!))
             }
@@ -56,17 +57,18 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
     
     func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "postMessageListener" {
-            getSessionListener = true
-            guard let formValues = message.body as? [String: AnyObject] else { return }
-            let hasId = formValues.contains { (key: String, value: AnyObject) in
-                return key == "device_session_id"
+            if !getSessionListener {
+                guard let formValues = message.body as? [String: AnyObject] else { return }
+                let hasId = formValues.contains { (key: String, value: AnyObject) in
+                    return key == "device_session_id"
+                }
+                if hasId {
+                    successSession!(formValues["device_session_id"]! as! String)
+                    getSessionListener = true
+                } else {
+                    failureSession!("Error getting device session id")
+                }
             }
-            if hasId {
-                successSession!(formValues["device_session_id"]! as! String)
-            } else {
-                failureSession!("Error getting device session id")
-            }
-            
         }
                 
     }

@@ -40,11 +40,11 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         
         let queryParameters: [String: String] = ["merchant_id": coreConfig.merchantId, "public_key": coreConfig.publicKey]
         
-        let path = "/script/device-session.html"
+        let path = "/script/device-session"
         let urlString = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
         var urlComponents = URLComponents(url: urlString, resolvingAgainstBaseURL: false)
         urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
-        
+        URLCache.shared.removeAllCachedResponses()
         webView?.load(URLRequest(url: urlComponents!.url!))
         
         Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in

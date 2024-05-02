@@ -92,7 +92,7 @@ var orkestapay: OrkestapayClient!
 func myFunction() {
   orkestapay  = OrkestapayClient(merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
   let card = Card(number: "4111111111111111", expirationMonth: "12", expirationYear: "2025", cvv: "123", holderName: "Hector Rodriguez", oneTimeUse: false)
-  let paymentMethod = PaymentMethod(alias: "Test card", customerId: nil, deviceSessionId: deviceSessionId, card: card)
+  let paymentMethod = PaymentMethod(alias: "Test card", customerId: nil, deviceSessionId: deviceSessionId, card: card, billingAddress: nil)
 
   Task.init {
     do {

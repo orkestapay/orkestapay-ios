@@ -48,7 +48,15 @@ class HTTPResponseParser {
         do {
             decoder.keyDecodingStrategy = .convertFromSnakeCase
             let errorData = try decoder.decode(ErrorResponse.self, from: data)
-            throw NetworkingClientError.serverResponseError((errorData.message ?? errorData.error ?? NetworkingClientError.unknownError.errorDescription)!)
+            var errorDescription = errorData.message ?? errorData.error
+            if ((errorData.validationErrors?.isEmpty) != nil) {
+                let errors = errorData.validationErrors?.map { error in
+                    error.message
+                }.joined(separator: ",")
+                errorDescription! += " [\(errors!)]"
+            }
+            
+            throw NetworkingClientError.serverResponseError(errorDescription!)
         } catch {
             throw NetworkingClientError.jsonDecodingError(error.localizedDescription)
         }

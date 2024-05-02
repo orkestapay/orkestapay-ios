@@ -47,7 +47,7 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         URLCache.shared.removeAllCachedResponses()
         webView?.load(URLRequest(url: urlComponents!.url!))
         
-        Timer.scheduledTimer(withTimeInterval: 5.0, repeats: false) { timer in
+        Timer.scheduledTimer(withTimeInterval: 12.0, repeats: false) { timer in
             if !self.getSessionListener {
                 self.webView?.load(URLRequest(url: urlComponents!.url!))
             }

@@ -13,6 +13,7 @@ struct ErrorResponse: Codable {
     let category: String?
     let message: String?
     let error: String?
+    let validationErrors: [FieldError]?
     
 
 }

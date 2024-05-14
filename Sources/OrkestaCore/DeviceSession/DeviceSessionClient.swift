@@ -27,7 +27,7 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         self.coreConfig = coreConfig
     }
     
-    func getDeviceSessionId(_ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
+    func getDeviceSessionId(_ viewController: UIViewController, _ successSessionID: @escaping (String) -> Void, _ failureSessionID: @escaping (String) -> Void) {
         getSessionListener = false
         successSession = successSessionID
         failureSession = failureSessionID
@@ -35,8 +35,7 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         let config = WKWebViewConfiguration()
         config.userContentController.add(self, name: "postMessageListener")
         webView = WKWebView(frame: .zero, configuration: config)
-        let view = UIView(frame: .zero)
-        view.addSubview(webView!)
+        viewController.view.addSubview(webView!)
         
         let queryParameters: [String: String] = ["merchant_id": coreConfig.merchantId, "public_key": coreConfig.publicKey]
         
@@ -44,14 +43,23 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
         let urlString = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
         var urlComponents = URLComponents(url: urlString, resolvingAgainstBaseURL: false)
         urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
-        URLCache.shared.removeAllCachedResponses()
+        /*URLCache.shared.removeAllCachedResponses()
+        URLCache.shared.diskCapacity = 0
+        URLCache.shared.memoryCapacity = 0
+
+        if let cookies = HTTPCookieStorage.shared.cookies {
+            for cookie in cookies {
+                HTTPCookieStorage.shared.deleteCookie(cookie)
+            }
+        }*/
+
         webView?.load(URLRequest(url: urlComponents!.url!))
         
-        Timer.scheduledTimer(withTimeInterval: 12.0, repeats: false) { timer in
+        /*Timer.scheduledTimer(withTimeInterval: 12.0, repeats: false) { timer in
             if !self.getSessionListener {
-                self.webView?.load(URLRequest(url: urlComponents!.url!))
+                self.webView?.reload()
             }
-        }
+        }*/
         
     }
     
@@ -60,14 +68,19 @@ class DeviceSessionClient: NSObject, WKScriptMessageHandler {
             if !getSessionListener {
                 guard let formValues = message.body as? [String: AnyObject] else { return }
                 let hasId = formValues.contains { (key: String, value: AnyObject) in
-                    return key == "device_session_id"
+                    return key == "device_session_id" 
+                }
+                let hasError = formValues.contains { (key: String, value: AnyObject) in
+                    return key == "error"
                 }
                 if hasId {
                     successSession!(formValues["device_session_id"]! as! String)
-                    getSessionListener = true
+                } else if hasError {
+                    failureSession!(formValues["error"]!["message"]! as! String)
                 } else {
                     failureSession!("Error getting device session id")
                 }
+                getSessionListener = true
             }
         }
                 

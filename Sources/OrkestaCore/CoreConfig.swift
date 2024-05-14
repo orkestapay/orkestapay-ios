@@ -14,7 +14,11 @@ struct CoreConfig {
     let publicKey: String
 
     init(merchantId: String, publicKey: String, environment: Environment) {
-        self.merchantId = merchantId
+        var id = merchantId;
+        if !merchantId.starts(with: "mid_") {
+            id = "mid_\(id)"
+        }
+        self.merchantId = id
         self.publicKey = publicKey
         self.environment = environment
     }

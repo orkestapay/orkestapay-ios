@@ -24,8 +24,8 @@ public class OrkestapayClient: NSObject {
     }
     
     
-    public func createDeviceSession(successSessionID: @escaping (String) -> (), failureSessionID: @escaping (String) -> ()) {
-        deviceSessionClient.getDeviceSessionId(successSessionID, failureSessionID)
+    public func createDeviceSession(viewController: UIViewController, successSessionID: @escaping (String) -> (), failureSessionID: @escaping (String) -> ()) {
+        deviceSessionClient.getDeviceSessionId(viewController,successSessionID, failureSessionID)
 
     }
     

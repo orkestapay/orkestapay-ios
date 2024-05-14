@@ -69,7 +69,7 @@ Library contains a function to generate device session id
 var orkestapay: OrkestapayClient!
 
 func myFunction() {
-  orkestapay  = OrkestapayClient(merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
+  orkestapay  = OrkestapayClient(viewController: self, merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
   orkestapay.createDeviceSession(successSessionID: successSessionId, failureSessionID: failureSessionId)
 }
 

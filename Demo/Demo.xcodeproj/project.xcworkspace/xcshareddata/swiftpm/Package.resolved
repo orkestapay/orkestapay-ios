@@ -1,0 +1,14 @@
+{
+  "pins" : [
+    {
+      "identity" : "orkestapay-ios",
+      "kind" : "remoteSourceControl",
+      "location" : "https://github.com/orkestapay/orkestapay-ios.git",
+      "state" : {
+        "revision" : "2945ed0fc561ee3d2a07b6d97455727b8c33b457",
+        "version" : "0.0.9"
+      }
+    }
+  ],
+  "version" : 2
+}

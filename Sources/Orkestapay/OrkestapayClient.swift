@@ -11,7 +11,7 @@ import UIKit
 import OrkestaCore
 #endif
 
-public class OrkestapayClient: NSObject {
+public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegate {
     private let config: CoreConfig
     private let deviceSessionClient: DeviceSessionClient
     private let orkestapayAPI: OrkestapayAPI
@@ -52,5 +52,14 @@ public class OrkestapayClient: NSObject {
         } catch {
             throw OrkestapayError(errorDescription: error.localizedDescription)
         }
+    }
+    
+    public func clickToPayCheckout(completed: @escaping ([String: Any]) -> (), error: @escaping ([String: Any]) -> (), cancel: @escaping () -> ()) {
+        let clickToPayViewController = ClickToPayViewController(completed, error, cancel)
+        if !clickToPayViewController.showWebView() {
+            return
+        }
+        clickToPayViewController.presentationController?.delegate = self
+        clickToPayViewController.loadCheckout()
     }
 }

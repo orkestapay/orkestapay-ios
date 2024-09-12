@@ -13,15 +13,19 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     public var webView: WKWebView?
     let configuration = WKWebViewConfiguration()
     private var activityIndicator: UIActivityIndicatorView!
+    private let coreConfig: CoreConfig
+    private var clickToPay: ClickToPay?
     private var completed: ([String: Any]) -> Void
     private var error: ([String: Any]) -> Void
     private var cancel: () -> Void
 
     
-    init(_ completed: @escaping ([String: Any]) -> Void, _ error: @escaping ([String: Any]) -> Void, _ cancel: @escaping () -> Void) {
+    init(_ coreConfig: CoreConfig, _ clickToPay: ClickToPay, _ completed: @escaping ([String: Any]) -> Void, _ error: @escaping ([String: Any]) -> Void, _ cancel: @escaping () -> Void) {
+        self.clickToPay = clickToPay
         self.completed = completed
         self.error = error
         self.cancel = cancel
+        self.coreConfig = coreConfig
         super.init(nibName: nil, bundle: nil)
     }
     
@@ -33,22 +37,15 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         super.viewDidLoad()
 
         // Do any additional setup after loading the view.
-        //view.backgroundColor = UIColor.white
+        view.backgroundColor = UIColor.white
         //self.showLoader()
     }
     
 
     func loadCheckout() {
-        /*let userScript = WKUserScript(
-            source: scriptSource,
-            injectionTime: .atDocumentStart,
-            forMainFrameOnly: false
-        )*/
-
-        //self.configuration.preferences.javaScriptEnabled = true
         self.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
-        //self.configuration.userContentController.addUserScript(userScript)
         self.configuration.userContentController.add(self, name: "postMessageListener")
+        self.webView?.configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         self.webView = WKWebView(
             frame: view.bounds,
             configuration: self.configuration
@@ -56,10 +53,19 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
 
         self.webView!.navigationDelegate = self
         self.webView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        
+        let queryParameters = addParams()
+        
+        let path = "/integrations/click2pay/#/checkout/\(coreConfig.merchantId)/\(coreConfig.publicKey)"
+        let url = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
+        
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        
 
-        if let url = URL(string: "https://checkout.dev.orkestapay.com/integrations/click2pay/#/checkout/mch_205991e69bef45949c7dadb3519b1ae8/pk_test_grd7q3jrzb0yqih6pj6z3cznsl7c5ngb/dd1cbff5-dc54-4665-a449-554d20b61c0a_dpa0/en_US?dpaName=Testdpa0&cardBrands=amex&cardBrands=mastercard&cardBrands=visa&email=orkestapay.customer.02@yopmail.com&phoneCountryCode=52&phoneNumber=7712345678&firstName=John&lastName=Doe&isSandbox=false") {
-            let request = URLRequest(url: url)
-            self.webView?.load(request)
+        if let range = urlComponents!.url!.absoluteString.range(of:"%23") {
+            print(urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#"))
+            self.webView?.load(URLRequest(url: URL(string: urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#") )!))
         }
     }
     func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
@@ -74,9 +80,8 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     
     func showWebView() -> Bool {
         guard let viewController = UIApplication.shared.firstKeyWindow else {
-                
-                return false
-            }
+            return false
+        }
             
         self.modalPresentationStyle = .pageSheet
         self.presentationController?.delegate = self
@@ -126,6 +131,23 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
 
         }
                 
+    }
+    
+    func addParams() -> [String: String] {
+        let mirrored_object = Mirror(reflecting: self.clickToPay!)
+        var queryParameters: [String: String] = [:]
+        for (label, value) in mirrored_object.children {
+            
+            guard let label = label else { continue }
+            
+            if let description = value as? String {
+                queryParameters[label] = description
+            } else if let description = value as? Bool {
+                queryParameters[label] = String(description)
+            }
+        }
+        return queryParameters
+        
     }
     
     func close() {

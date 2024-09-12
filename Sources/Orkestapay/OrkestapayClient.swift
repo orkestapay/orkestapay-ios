@@ -54,8 +54,8 @@ public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegat
         }
     }
     
-    public func clickToPayCheckout(completed: @escaping ([String: Any]) -> (), error: @escaping ([String: Any]) -> (), cancel: @escaping () -> ()) {
-        let clickToPayViewController = ClickToPayViewController(completed, error, cancel)
+    public func clickToPayCheckout(clickToPay: ClickToPay, completed: @escaping ([String: Any]) -> (), error: @escaping ([String: Any]) -> (), cancel: @escaping () -> ()) {
+        let clickToPayViewController = ClickToPayViewController(config, clickToPay, completed, error, cancel)
         if !clickToPayViewController.showWebView() {
             return
         }

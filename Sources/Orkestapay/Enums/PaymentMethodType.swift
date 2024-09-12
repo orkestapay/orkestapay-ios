@@ -10,4 +10,5 @@ import Foundation
 public enum PaymentMethodType: String, Codable {
     case CARD = "CARD"
     case APPLE_PAY = "APPLE_PAY"
+    case CLICK_TO_PAY = "CLICK_TO_PAY"
 }

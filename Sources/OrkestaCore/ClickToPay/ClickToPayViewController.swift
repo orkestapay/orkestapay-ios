@@ -15,16 +15,16 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     private var activityIndicator: UIActivityIndicatorView!
     private let coreConfig: CoreConfig
     private var clickToPay: ClickToPay?
-    private var completed: ([String: Any]) -> Void
-    private var error: ([String: Any]) -> Void
-    private var cancel: () -> Void
+    private var onSuccess: (PaymentMethodResponse) -> Void
+    private var onError: ([String: Any]) -> Void
+    private var onCancel: () -> Void
 
     
-    init(_ coreConfig: CoreConfig, _ clickToPay: ClickToPay, _ completed: @escaping ([String: Any]) -> Void, _ error: @escaping ([String: Any]) -> Void, _ cancel: @escaping () -> Void) {
+    init(_ coreConfig: CoreConfig, _ clickToPay: ClickToPay, _ onSuccess: @escaping (PaymentMethodResponse) -> Void, _ onError: @escaping ([String: Any]) -> Void, _ onCancel: @escaping () -> Void) {
         self.clickToPay = clickToPay
-        self.completed = completed
-        self.error = error
-        self.cancel = cancel
+        self.onSuccess = onSuccess
+        self.onError = onError
+        self.onCancel = onCancel
         self.coreConfig = coreConfig
         super.init(nibName: nil, bundle: nil)
     }
@@ -118,14 +118,22 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
                 guard let data = jsonObject["data"] as? [String: Any] else {
                     return
                 }
-                completed(data)
+                do {
+                    let json = try JSONSerialization.data(withJSONObject: data)
+                    let decoder = JSONDecoder()
+                    decoder.keyDecodingStrategy = .convertFromSnakeCase
+                    let paymentMethod = try decoder.decode(PaymentMethodResponse.self, from: json)
+                    onSuccess(paymentMethod)
+                } catch {
+                    onError(["decode error": error.localizedDescription])
+                }
             case .ERROR:
                 guard let data = jsonObject["error"] as? [String: Any] else {
                     return
                 }
-                error(data)
+                onError(data)
             case .CANCEL:
-                cancel()
+                onCancel()
                 close()
             }
 

@@ -142,12 +142,12 @@ func myFunction() {
   orkestapay  = OrkestapayClient(merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
   let clickToPay = ClickToPay(email: "custome@mail.com", firstName: "John", lastName: "Doe", phoneCountryCode: "52", phoneNumber: "4411223344", isSandbox: true)
   
-  orkestapay.clickToPayCheckout(clickToPay: clickToPay, completed: {paymentMethod in
-      print("clickToPayCompleted: \(paymentMethod)")
-  }, error: {error in
-      print("clickToPayError: \(error)")
-  }, cancel: {
-      print("clickToPayCancel")
+  orkestapay.clickToPayCheckout(clickToPay: clickToPay, onSuccess: { paymentMethod in
+      print("clickToPay success: \(paymentMethod)")
+  }, onError: {error in
+      print("clickToPay error: \(error)")
+  }, onCancel: {
+      print("clickToPay cancel")
   })
 }
 ```

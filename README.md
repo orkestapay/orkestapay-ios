@@ -129,3 +129,27 @@ func myFunction() {
   }
 }
 ```
+
+#### Click to Pay Checkout
+
+Click to Pay Checkout
+Library contains a function to open checkout to Click to Pay.
+
+```swift
+var orkestapay: OrkestapayClient!
+
+func myFunction() {
+  orkestapay  = OrkestapayClient(merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
+  let clickToPay = ClickToPay(email: "custome@mail.com", firstName: "John", lastName: "Doe", phoneCountryCode: "52", phoneNumber: "4411223344", isSandbox: true)
+  
+  orkestapay.clickToPayCheckout(clickToPay: clickToPay, completed: {paymentMethod in
+      print("clickToPayCompleted: \(paymentMethod)")
+  }, error: {error in
+      print("clickToPayError: \(error)")
+  }, cancel: {
+      print("clickToPayCancel")
+  })
+}
+```
+
+

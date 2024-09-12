@@ -1,6 +1,6 @@
 Pod::Spec.new do |s|
   s.name         = "Orkestapay"
-  s.version      = "0.0.10"
+  s.version      = "0.0.11"
   s.summary      = "Orkestapay iOS library"
   s.homepage     = "https://orkestapay.com"
   s.license      = "GNU General Public License v3.0"

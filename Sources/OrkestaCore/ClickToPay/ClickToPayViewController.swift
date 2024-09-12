@@ -64,7 +64,6 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         
 
         if let range = urlComponents!.url!.absoluteString.range(of:"%23") {
-            print(urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#"))
             self.webView?.load(URLRequest(url: URL(string: urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#") )!))
         }
     }
@@ -124,6 +123,7 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let paymentMethod = try decoder.decode(PaymentMethodResponse.self, from: json)
                     onSuccess(paymentMethod)
+                    close()
                 } catch {
                     onError(["decode error": error.localizedDescription])
                 }

@@ -59,9 +59,12 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         let path = "/integrations/click2pay/#/checkout/\(coreConfig.merchantId)/\(coreConfig.publicKey)"
         let url = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
         
-        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: false)
+        var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
         urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
         
+        let encodeParams = urlComponents?.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
+        urlComponents?.percentEncodedQuery = encodeParams
+
 
         if let range = urlComponents!.url!.absoluteString.range(of:"%23") {
             self.webView?.load(URLRequest(url: URL(string: urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#") )!))

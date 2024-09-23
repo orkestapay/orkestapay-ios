@@ -13,7 +13,9 @@ public struct ClickToPay: Encodable {
     public var lastName: String?
     public var phoneCountryCode: String?
     public var phoneNumber: String?
+    public var isCscRequired: Bool?
     public var isSandbox: Bool?
+    
 
     public init(
         email: String?,
@@ -21,6 +23,7 @@ public struct ClickToPay: Encodable {
         lastName: String?,
         phoneCountryCode: String?,
         phoneNumber: String?,
+        isCscRequired: Bool?,
         isSandbox: Bool?
     ) {
         self.email = email
@@ -28,6 +31,7 @@ public struct ClickToPay: Encodable {
         self.lastName = lastName
         self.phoneCountryCode = phoneCountryCode
         self.phoneNumber = phoneNumber
+        self.isCscRequired = isCscRequired
         self.isSandbox = isSandbox
     }
 }

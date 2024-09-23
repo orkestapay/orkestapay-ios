@@ -140,7 +140,7 @@ var orkestapay: OrkestapayClient!
 
 func myFunction() {
   orkestapay  = OrkestapayClient(merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
-  let clickToPay = ClickToPay(email: "custome@mail.com", firstName: "John", lastName: "Doe", phoneCountryCode: "52", phoneNumber: "4411223344", isSandbox: true)
+  let clickToPay = ClickToPay(email: "custome@mail.com", firstName: "John", lastName: "Doe", phoneCountryCode: "52", phoneNumber: "4411223344", isCscRequired: true, isSandbox: true)
   
   orkestapay.clickToPayCheckout(clickToPay: clickToPay, onSuccess: { paymentMethod in
       print("clickToPay success: \(paymentMethod)")

@@ -15,7 +15,7 @@ public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegat
     private let config: CoreConfig
     private let deviceSessionClient: DeviceSessionClient
     private let orkestapayAPI: OrkestapayAPI
-    
+    private var onCancel: () -> Void = { }
     
     public init(merchantId: String, publicKey:String, isProductionMode: Bool) {
         self.config = CoreConfig(merchantId: merchantId, publicKey: publicKey, environment: isProductionMode ? .production : .sandbox)
@@ -55,11 +55,16 @@ public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegat
     }
     
     public func clickToPayCheckout(clickToPay: ClickToPay, onSuccess: @escaping (PaymentMethodResponse) -> (), onError: @escaping ([String: Any]) -> (), onCancel: @escaping () -> ()) {
+        self.onCancel = onCancel
         let clickToPayViewController = ClickToPayViewController(config, clickToPay, onSuccess, onError, onCancel)
         if !clickToPayViewController.showWebView() {
             return
         }
         clickToPayViewController.presentationController?.delegate = self
         clickToPayViewController.loadCheckout()
+    }
+    
+    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
+        self.onCancel()
     }
 }

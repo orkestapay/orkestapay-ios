@@ -164,4 +164,6 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     func close() {
         dismiss(animated: true)
     }
+    
+    
 }

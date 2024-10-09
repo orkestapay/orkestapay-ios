@@ -65,7 +65,6 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         let encodeParams = urlComponents?.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         urlComponents?.percentEncodedQuery = encodeParams
 
-
         if let range = urlComponents!.url!.absoluteString.range(of:"%23") {
             self.webView?.load(URLRequest(url: URL(string: urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#") )!))
         }
@@ -82,6 +81,14 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     
     func showWebView() -> Bool {
         guard let viewController = UIApplication.shared.firstKeyWindow else {
+            return false
+        }
+        if(coreConfig.merchantId == "") {
+            onError(["config error": "merchant id is empty"])
+            return false
+        }
+        if(coreConfig.publicKey == ""){
+            onError(["config error": "public key is empty"])
             return false
         }
             

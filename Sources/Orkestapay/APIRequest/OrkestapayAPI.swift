@@ -41,6 +41,17 @@ class OrkestapayAPI {
         return try HTTPResponseParser().parseREST(httpResponse, as: PaymentMethodResponse.self)
     }
     
+    func createPaymentMethodApplePay(pMethodRequest: PaymentMethod2RegistryApplePay) async throws -> PaymentMethodResponse {
+        let restRequest = RESTRequest(
+            path: "/v1/payment-methods",
+            method: .post,
+            queryParameters: nil,
+            postParameters: pMethodRequest
+        )
+        let httpResponse = try await networkingClient.fetch(request: restRequest)
+        return try HTTPResponseParser().parseREST(httpResponse, as: PaymentMethodResponse.self)
+    }
+    
     func getPromotions(binNumber: String, currency: String, totalAmount: String) async throws -> [PromotionsResponse] {
         let queryParams: [String: String] = ["binNumber":binNumber, "currency":currency, "totalAmount": totalAmount]
         
@@ -53,5 +64,16 @@ class OrkestapayAPI {
         
         let httpResponse = try await networkingClient.fetch(request: restRequest)
         return try HTTPResponseParser().parseREST(httpResponse, as: [PromotionsResponse].self)
+    }
+    
+    func getPaymentMethodInfo() async throws -> PaymentMethodData {
+        let restRequest = RESTRequest(
+            path: "/v1/merchants/payment-methods/APPLE_PAY",
+            method: .get,
+            queryParameters: nil,
+            postParameters: nil
+        )
+        let httpResponse = try await networkingClient.fetch(request: restRequest)
+        return try HTTPResponseParser().parseREST(httpResponse, as: PaymentMethodData.self)
     }
 }

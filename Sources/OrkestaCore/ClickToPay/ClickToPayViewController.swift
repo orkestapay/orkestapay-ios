@@ -19,6 +19,9 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     private var onError: ([String: Any]) -> Void
     private var onCancel: () -> Void
     
+    private var newNavController = false
+    
+    
     private var successPaymentMethod = false
 
     
@@ -42,6 +45,13 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         view.backgroundColor = UIColor.white
         //self.showLoader()
         
+        let backbutton = UIButton(type: .custom)
+        backbutton.setImage(UIImage(named: "backIcon"), for: .normal)
+        backbutton.setTitle("Regresar", for: .normal)
+        backbutton.setTitleColor(.black, for: .normal) 
+        backbutton.addTarget(self, action: #selector(self.backAction), for: .touchUpInside)
+
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backbutton)
     }
     
     override func viewWillDisappear(_ animated: Bool) {
@@ -51,7 +61,10 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         }
     }
     
-    
+    @objc func backAction() -> Void {
+        onCancel()
+        close()
+    }
 
     func loadCheckout() {
         self.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
@@ -109,8 +122,17 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
             UINavigationController {
             navigationController.pushViewController(self, animated: true)
         } else {
-            self.modalPresentationStyle = .pageSheet
-            viewController.rootViewController?.present(self, animated: true, completion: nil)
+            let appearance = UINavigationBarAppearance()
+            appearance.backgroundColor = .white
+            
+            let myNavigationController = UINavigationController(rootViewController: self)
+            myNavigationController.navigationBar.standardAppearance = appearance
+            myNavigationController.navigationBar.scrollEdgeAppearance = appearance
+            myNavigationController.modalPresentationStyle = .fullScreen
+            viewController.rootViewController?.present(myNavigationController, animated: true)
+            newNavController = true
+            //self.modalPresentationStyle = .pageSheet
+            //viewController.rootViewController?.present(self, animated: true, completion: nil)
         }
         
         return true
@@ -187,6 +209,9 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     }
     
     func close() {
+        if newNavController {
+            self.dismiss(animated: true)
+        }
         if let navController = self.navigationController {
             navController.popViewController(animated: true)
         } else {

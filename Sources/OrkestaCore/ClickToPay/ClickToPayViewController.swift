@@ -18,6 +18,11 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     private var onSuccess: (PaymentMethodResponse) -> Void
     private var onError: ([String: Any]) -> Void
     private var onCancel: () -> Void
+    
+    private var newNavController = false
+    
+    
+    private var successPaymentMethod = false
 
     
     init(_ coreConfig: CoreConfig, _ clickToPay: ClickToPay, _ onSuccess: @escaping (PaymentMethodResponse) -> Void, _ onError: @escaping ([String: Any]) -> Void, _ onCancel: @escaping () -> Void) {
@@ -39,8 +44,27 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         // Do any additional setup after loading the view.
         view.backgroundColor = UIColor.white
         //self.showLoader()
+        
+        let backbutton = UIButton(type: .custom)
+        backbutton.setImage(UIImage(named: "backIcon"), for: .normal)
+        backbutton.setTitle("Regresar", for: .normal)
+        backbutton.setTitleColor(.black, for: .normal) 
+        backbutton.addTarget(self, action: #selector(self.backAction), for: .touchUpInside)
+
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backbutton)
     }
     
+    override func viewWillDisappear(_ animated: Bool) {
+        super.viewWillDisappear(animated)
+        if self.isMovingFromParent && !successPaymentMethod {
+            onCancel()
+        }
+    }
+    
+    @objc func backAction() -> Void {
+        onCancel()
+        close()
+    }
 
     func loadCheckout() {
         self.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
@@ -92,10 +116,25 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
             return false
         }
             
-        self.modalPresentationStyle = .pageSheet
         self.presentationController?.delegate = self
-        viewController.rootViewController?.present(self, animated: true, completion: nil)
+        
+        if let keyWindow = UIApplication.shared.windows.first(where: { $0.isKeyWindow }), let navigationController = keyWindow.rootViewController as?
+            UINavigationController {
+            navigationController.pushViewController(self, animated: true)
+        } else {
+            let appearance = UINavigationBarAppearance()
+            appearance.backgroundColor = .white
             
+            let myNavigationController = UINavigationController(rootViewController: self)
+            myNavigationController.navigationBar.standardAppearance = appearance
+            myNavigationController.navigationBar.scrollEdgeAppearance = appearance
+            myNavigationController.modalPresentationStyle = .fullScreen
+            viewController.rootViewController?.present(myNavigationController, animated: true)
+            newNavController = true
+            //self.modalPresentationStyle = .pageSheet
+            //viewController.rootViewController?.present(self, animated: true, completion: nil)
+        }
+        
         return true
     }
     
@@ -133,6 +172,7 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
                     decoder.keyDecodingStrategy = .convertFromSnakeCase
                     let paymentMethod = try decoder.decode(PaymentMethodResponse.self, from: json)
                     onSuccess(paymentMethod)
+                    successPaymentMethod = true
                     close()
                 } catch {
                     onError(["decode error": error.localizedDescription])
@@ -169,7 +209,14 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     }
     
     func close() {
-        dismiss(animated: true)
+        if newNavController {
+            self.dismiss(animated: true)
+        }
+        if let navController = self.navigationController {
+            navController.popViewController(animated: true)
+        } else {
+            dismiss(animated: true)
+        }
     }
     
     

@@ -10,16 +10,19 @@ import UIKit
 #if canImport(OrkestaCore)
 import OrkestaCore
 #endif
+import PassKit
 
 public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegate {
     private let config: CoreConfig
     private let deviceSessionClient: DeviceSessionClient
+    private let applePayClient: ApplePayClient
     private let orkestapayAPI: OrkestapayAPI
     private var onCancel: () -> Void = { }
     
     public init(merchantId: String, publicKey:String, isProductionMode: Bool) {
         self.config = CoreConfig(merchantId: merchantId, publicKey: publicKey, environment: isProductionMode ? .production : .sandbox)
         self.deviceSessionClient = DeviceSessionClient(coreConfig: config)
+        self.applePayClient = ApplePayClient(coreConfig: config)
         self.orkestapayAPI = OrkestapayAPI(coreConfig: config)
     }
     
@@ -67,4 +70,31 @@ public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegat
     public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
         self.onCancel()
     }
+    
+    public func applePayChechout(applePayRequest: ApplePayRequest, onSuccess: @escaping (PaymentMethodResponse) -> (), onError: @escaping ([String: Any]) -> (), onCancel: @escaping () -> ()) {
+        Task.init {
+            do {
+                let pmData = try await self.orkestapayAPI.getPaymentMethodInfo()
+                self.applePayClient.applePayChechout(applePayRequest, merchantIdentifier: pmData.properties.merchantIdentifier, paymentMethod2Registry: { paymentMethod in
+                    Task.init {
+                        do {
+                            let response = try await self.orkestapayAPI.createPaymentMethodApplePay(pMethodRequest: paymentMethod)
+                            onSuccess(response)
+                        } catch let error as CoreSDKError{
+                            onError(["error": error.errorDescription ?? ""])
+                        } catch {
+                            onError(["error": error.localizedDescription])
+                        }
+                    }
+                }, onError, onCancel)
+                
+            } catch let error as CoreSDKError{
+                onError(["error": error.errorDescription ?? ""])
+            } catch {
+                onError(["error": error.localizedDescription])
+            }
+        }
+        
+    }
+
 }

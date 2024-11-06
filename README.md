@@ -152,4 +152,34 @@ func myFunction() {
 }
 ```
 
+#### Apple Pay
+
+Library contains a function to create payment method through Apple Pay.
+
+##### Setup your integration
+Enable Apple Pay in your app
+Log in to your Apple Developer account at https://developer.apple.com.<br />
+Follow the Apple Developer Account Help instructions to enable [Apple Pay](https://developer.apple.com/help/account/manage-identifiers/enable-app-capabilities#enable-apple-pay).
+
+Adding Capability<br />
+Move to your target , select your app as your target. Click on Signing & Capabilities . Click on the + icon and select apple pay, if all went well , you will see your merchant id already, if its not selected select it or follow Apple's guide to [Add Capability](https://developer.apple.com/documentation/xcode/configuring-apple-pay-support)
+
+##### Apple Pay request
+```swift
+var orkestapay: OrkestapayClient!
+
+func myFunction() {
+  orkestapay  = OrkestapayClient(merchantId: merchantId, publicKey: publicKey, isProductionMode: false)
+  
+  let applePayRequest = ApplePayRequest(merchantName: "Merchant name", totalAmount: "500", countryCode: "MX", currencyCode: "MXN")
+  orkestapay.applePayChechout(applePayRequest: applePayRequest, onSuccess: { paymentMethod in
+      print("apple pay success: \(paymentMethod)")
+  }, onError: {error in
+      print("apple pay error: \(error)")
+  }, onCancel: {
+      print("clickToPayCancel")
+  })
+}
+```
+
 

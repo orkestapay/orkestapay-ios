@@ -34,6 +34,7 @@ class NetworkingClient {
         var headers: [HTTPHeader: String] = [
             .authorization: "Basic \(base64EncodedCredentials)"
         ]
+        //print(headers)
         if request.method == .post {
             headers[.contentType] = "application/json"
         }

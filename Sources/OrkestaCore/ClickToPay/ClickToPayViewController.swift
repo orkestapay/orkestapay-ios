@@ -80,7 +80,13 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         
         let queryParameters = addParams()
         
-        let path = "/integrations/click2pay/#/checkout/\(coreConfig.merchantId)/\(coreConfig.publicKey)"
+        var path = "/integrations/click2pay/#/checkout/\(coreConfig.merchantId)/\(coreConfig.publicKey)"
+        if let currency = self.clickToPay?.currency {
+            path += "/\(currency)"
+        }
+        if let amount = self.clickToPay?.totalAmount {
+            path += "/\(amount)"
+        }
         let url = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
         
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)

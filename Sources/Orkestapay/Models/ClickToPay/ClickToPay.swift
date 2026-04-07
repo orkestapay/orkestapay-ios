@@ -8,27 +8,23 @@
 import Foundation
 
 public struct ClickToPay: Encodable {
-    public var email: String?
+    public var email: String
     public var firstName: String?
     public var lastName: String?
     public var phoneCountryCode: String?
     public var phoneNumber: String?
-    public var totalAmount: String?
-    public var currency: String?
-    public var isCscRequired: Bool?
-    public var isSandbox: Bool?
+    public var totalAmount: String
+    public var currency: String
     
 
     public init(
-        email: String?,
+        email: String,
         firstName: String?,
         lastName: String?,
         phoneCountryCode: String?,
         phoneNumber: String?,
-        totalAmount: String?,
-        currency: String?,
-        isCscRequired: Bool?,
-        isSandbox: Bool?
+        totalAmount: String,
+        currency: String
     ) {
         self.email = email
         self.firstName = firstName
@@ -37,7 +33,5 @@ public struct ClickToPay: Encodable {
         self.phoneNumber = phoneNumber
         self.totalAmount = totalAmount
         self.currency = currency
-        self.isCscRequired = isCscRequired
-        self.isSandbox = isSandbox
     }
 }

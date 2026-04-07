@@ -6,13 +6,14 @@
 //
 
 import Foundation
-import WebKit
+//import WebKit
 import UIKit
+import SafariServices
 
-class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDelegate, UIAdaptivePresentationControllerDelegate, WKScriptMessageHandler {
-    public var webView: WKWebView?
-    let configuration = WKWebViewConfiguration()
-    private var activityIndicator: UIActivityIndicatorView!
+class ClickToPayViewController: UIViewController, UIAdaptivePresentationControllerDelegate {
+    //public var webView: WKWebView?
+    //let configuration = WKWebViewConfiguration()
+    //private var activityIndicator: UIActivityIndicatorView!
     private let coreConfig: CoreConfig
     private var clickToPay: ClickToPay?
     private var onSuccess: (PaymentMethodResponse) -> Void
@@ -67,7 +68,7 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     }
 
     func loadCheckout() {
-        self.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
+        /*self.configuration.preferences.javaScriptCanOpenWindowsAutomatically = true
         self.configuration.userContentController.add(self, name: "postMessageListener")
         self.webView?.configuration.defaultWebpagePreferences.allowsContentJavaScript = true
         self.webView = WKWebView(
@@ -76,30 +77,39 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
         )
 
         self.webView!.navigationDelegate = self
-        self.webView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]
+        self.webView!.autoresizingMask = [.flexibleWidth, .flexibleHeight]*/
+        
+        let config = SFSafariViewController.Configuration()
+        config.entersReaderIfAvailable = false
+        config.barCollapsingEnabled = true
         
         let queryParameters = addParams()
         
-        var path = "/integrations/click2pay/#/checkout/\(coreConfig.merchantId)/\(coreConfig.publicKey)"
-        if let currency = self.clickToPay?.currency {
+        let path = "/integrations/click-to-pay"
+        /*if let currency = self.clickToPay?.currency {
             path += "/\(currency)"
         }
         if let amount = self.clickToPay?.totalAmount {
             path += "/\(amount)"
-        }
+        }*/
         let url = coreConfig.environment.resourcesBaseURL.appendingPathComponent(path)
         
         var urlComponents = URLComponents(url: url, resolvingAgainstBaseURL: true)
-        urlComponents?.queryItems = queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
+        urlComponents?.queryItems = [URLQueryItem(name: "merchantId", value: coreConfig.merchantId), URLQueryItem(name: "publicKey", value: coreConfig.publicKey)] + queryParameters.map { URLQueryItem(name: $0.key, value: $0.value) }
         
         let encodeParams = urlComponents?.percentEncodedQuery?.replacingOccurrences(of: "+", with: "%2B")
         urlComponents?.percentEncodedQuery = encodeParams
-
-        if let range = urlComponents!.url!.absoluteString.range(of:"%23") {
-            self.webView?.load(URLRequest(url: URL(string: urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#") )!))
+        
+        if let url = urlComponents?.url {
+            //self.webView?.load(URLRequest(url: URL(string: urlComponents!.url!.absoluteString.replacingCharacters(in: range, with:"#") )!))
+            print(url)
+            
+            let controllerInstance = SFSafariViewController(url: url,configuration: config)
+            controllerInstance.dismissButtonStyle = .cancel
+            self.parent?.present(controllerInstance, animated: true)
         }
     }
-    func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    /*func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
             view.addSubview(webView)
 
             webView.frame.size.height = view.frame.height
@@ -107,7 +117,7 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
             webView.scrollView.isScrollEnabled = true
 
             //self.hideLoader()
-    }
+    }*/
     
     func showWebView() -> Bool {
         guard let viewController = UIApplication.shared.firstKeyWindow else {
@@ -145,18 +155,18 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
     }
     
     private func showLoader() {
-        self.activityIndicator = UIActivityIndicatorView(style: .large)
+        /*self.activityIndicator = UIActivityIndicatorView(style: .large)
         self.activityIndicator.color = .blue
         self.activityIndicator.center = view.center
         view.addSubview(self.activityIndicator)
-        self.activityIndicator.startAnimating()
+        self.activityIndicator.startAnimating()*/
     }
     
     private func hideLoader() {
-        self.activityIndicator.removeFromSuperview()
+        //self.activityIndicator.removeFromSuperview()
     }
     
-    func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
+    /*func userContentController(_ userContentController: WKUserContentController, didReceive message: WKScriptMessage) {
         if message.name == "postMessageListener" {
             guard let jsonObject = message.body as? [String: AnyObject] else { return }
             guard let status = jsonObject["status"] as? String else {
@@ -195,7 +205,7 @@ class ClickToPayViewController: UIViewController, WKNavigationDelegate, WKUIDele
 
         }
                 
-    }
+    }*/
     
     func addParams() -> [String: String] {
         let mirrored_object = Mirror(reflecting: self.clickToPay!)

@@ -12,12 +12,11 @@ import OrkestaCore
 #endif
 import PassKit
 
-public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegate {
+public class OrkestapayClient: NSObject {
     private let config: CoreConfig
     private let deviceSessionClient: DeviceSessionClient
     private let applePayClient: ApplePayClient
     private let orkestapayAPI: OrkestapayAPI
-    private var onCancel: () -> Void = { }
     
     public init(merchantId: String, publicKey:String, isProductionMode: Bool) {
         self.config = CoreConfig(merchantId: merchantId, publicKey: publicKey, environment: isProductionMode ? .production : .sandbox)
@@ -57,19 +56,10 @@ public class OrkestapayClient: NSObject, UIAdaptivePresentationControllerDelegat
         }
     }
     
-    public func clickToPayCheckout(clickToPay: ClickToPay, onSuccess: @escaping (PaymentMethodResponse) -> (), onError: @escaping ([String: Any]) -> (), onCancel: @escaping () -> ()) {
-        self.onCancel = onCancel
-        let clickToPayViewController = ClickToPayViewController(config, clickToPay, onSuccess, onError, onCancel)
-        if !clickToPayViewController.showWebView() {
-            return
-        }
-        clickToPayViewController.presentationController?.delegate = self
-        clickToPayViewController.loadCheckout()
+    public func clickToPayCheckout(clickToPay: ClickToPay, onSuccess: @escaping (PaymentMethodResponse) -> (), onError: @escaping (String) -> (), onCancel: @escaping () -> ()) {
+        ClickToPayManager.shared.startCheckout(config, clickToPay, onSuccess, onError, onCancel)
     }
     
-    public func presentationControllerDidDismiss(_ presentationController: UIPresentationController) {
-        self.onCancel()
-    }
     
     public func applePayChechout(applePayRequest: ApplePayRequest, onSuccess: @escaping (PaymentMethodResponse) -> (), onError: @escaping ([String: Any]) -> (), onCancel: @escaping () -> ()) {
         Task.init {

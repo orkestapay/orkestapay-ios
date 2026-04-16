@@ -50,8 +50,6 @@ public class ClickToPayManager: NSObject {
         urlComponents?.percentEncodedQuery = encodeParams
         
         if let url = urlComponents?.url {
-            print(url)
-            
             let controllerInstance = SFSafariViewController(url: url,configuration: config)
             controllerInstance.delegate = self
             self.safariVC = controllerInstance
@@ -134,7 +132,6 @@ public class ClickToPayManager: NSObject {
 // MARK: - SFSafariViewControllerDelegate
 extension ClickToPayManager: SFSafariViewControllerDelegate {
     public func safariViewControllerDidFinish(_ controller: SFSafariViewController) {
-        print("onCancellll")
         safariVC = nil
         onCancel?()
     }

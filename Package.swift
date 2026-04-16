@@ -23,7 +23,8 @@ let package = Package(
         .target(
             name: "Orkestapay",
             path: "Sources",
-            resources: [.process("Resources/PrivacyInfo.xcprivacy")]
+            exclude: ["Resources/PrivacyInfo.xcprivacy"],
+            resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
         ),
     ]
 )

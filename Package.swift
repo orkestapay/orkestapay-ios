@@ -22,8 +22,7 @@ let package = Package(
         // Targets can depend on other targets in this package, and on products in packages this package depends on.
         .target(
             name: "Orkestapay",
-            path: "Sources",
-            exclude: ["Resources/PrivacyInfo.xcprivacy"],
+            path: "Sources/Orkestapay",
             resources: [.copy("Resources/PrivacyInfo.xcprivacy")]
         ),
     ]

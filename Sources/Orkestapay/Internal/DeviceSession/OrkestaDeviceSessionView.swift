@@ -11,6 +11,13 @@ public struct OrkestaSessionManager: UIViewControllerRepresentable {
     let orkestapay: OrkestapayClient
     var onSessionCreated: (String) -> Void
     var onSessionFailure: (String) -> Void
+    
+    public init(orkestapay: OrkestapayClient, onSessionCreated: @escaping (String) -> Void, onSessionFailure: @escaping (String) -> Void) {
+        self.orkestapay = orkestapay
+        self.onSessionCreated = onSessionCreated
+        self.onSessionFailure = onSessionFailure
+        
+    }
 
     public func makeUIViewController(context: Context) -> UIViewController {
         let controller = UIViewController()

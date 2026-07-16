@@ -23,7 +23,7 @@ enum Environment {
     var resourcesBaseURL: URL {
         switch self {
         case .sandbox:
-            return URL(string: "https://checkout.sbox.orkestapay.com")!
+            return URL(string: "https://checkout.sand.orkestapay.com")!
         case .production:
             return URL(string: "https://checkout.orkestapay.com")!
         }
